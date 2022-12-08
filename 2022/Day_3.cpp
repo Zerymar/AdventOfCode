@@ -73,7 +73,7 @@ void findCommonPackage(const string& compartment, string &commonPackage, bool no
 
 int main()
 {
-    string filePath = "C:/Users/cesar/OneDrive/Documents/GitHub/AdventOfCode/2022/Files/aoc_day3.txt";
+    string filePath = "aoc_day3.txt";
     ifstream inputFile(filePath);
     string line;
 
