@@ -4,113 +4,107 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <vector>
+#include <set>
 #include <unordered_map>
 using namespace std;
 
+/*
+A  Rock         1
+B  Paper        2
+C  Scissors     3
 
-void iterateThroughAlphabet(const string& albet, unordered_map<string, int>& map, int& priorityValue)
+X  Lose
+Y  Tie
+Z  Win
+
+Score:
+Loss   0
+    - A : Z
+    - B : X
+    - C : Y
+Tie    3
+    - A : X
+    - B : Y
+    - C : Z
+Win    6
+    - A : Y
+    - B : Z
+    - C : X
+
+*/
+
+
+string getOpponentString(string line)
 {
-    for (int i = 0; i < albet.length(); i++)
-    {
-        char packageLetter = albet[i];
-        string charString;
-        charString.push_back(packageLetter);
-        map[charString] = priorityValue;
-        priorityValue++;
-    }
+    string delimiter = " ";
+    string opponent = line.substr(0, line.find(delimiter));
+    return opponent;
 }
-
-void generatePriorityMap(unordered_map<string, int> &map)
-{
-    const string albet_lower{ "abcdefghijklmnopqrstuvwxyz" };
-    const string albet_upper{ "ABCDEFGHIJKLMNOPQRSTUVWXYZ" };
-
-    // start at one
-    int priorityValue = 1;
-    iterateThroughAlphabet(albet_lower, map, priorityValue);
-    iterateThroughAlphabet(albet_upper, map, priorityValue);
-
-}
-
-void findBadgeItem(vector<string> elfGroup, string &commonItem)
-{
-    // can always assume we have 3 elements
-    string firstGroup = elfGroup.at(0);
-    string secondGroup = elfGroup.at(1);
-    string thirdGroup = elfGroup.at(2);
-
-    for (int i = 0; i < firstGroup.length(); i++)
-    {
-        char item = firstGroup[i];
-        if (secondGroup.find(item) != string::npos && thirdGroup.find(item) != string::npos)
-        {
-            commonItem.push_back(item);
-            break;
-        }
-    }
-}
-
-
-void findCommonPackage(const string& compartment, string &commonPackage, bool noDupe)
-{
-    string firstHalf = compartment.substr(0, compartment.length() / 2);
-    string secondHalf = compartment.substr(compartment.length() / 2);
-    for (int i = 0; i < firstHalf.length(); i++)
-    {
-        char packageChar = firstHalf[i];
-        if (secondHalf.find(packageChar) != string::npos)
-        {
-            commonPackage.push_back(packageChar);
-            if (noDupe)
-            {
-                break;
-            }
-        }
-    }
-}
-
 
 int main()
 {
-    string filePath = "C:/Users/cesar/OneDrive/Documents/GitHub/AdventOfCode/2022/Files/aoc_day3.txt";
+    string filePath = "C:/Users/cesar/OneDrive/Documents/GitHub/AdventOfCode/2022/Files/aoc_day2.txt";
     ifstream inputFile(filePath);
     string line;
 
-    unordered_map<string, int> priorityValueUM;
-    vector <string> elfGroup;
-    generatePriorityMap(priorityValueUM);
+    set<string> tieSet;
+    tieSet.insert("A X");
+    tieSet.insert("B Y");
+    tieSet.insert("C Z");
 
-    int sum = 0;
-    int elfCount = 1;
+    set<string> winSet;
+    winSet.insert("A Y");
+    winSet.insert("B Z");
+    winSet.insert("C X");
+
+
+    unordered_map<string, string> lossMap;
+    lossMap["A"] = "C";
+    lossMap["B"] = "A";
+    lossMap["C"] = "B";
+
+    unordered_map<string, string> winMap;
+    winMap["A"] = "B";
+    winMap["B"] = "C";
+    winMap["C"] = "A";
+
+    unordered_map<string, int> pointMap;
+    pointMap["A"] = 1;
+    pointMap["B"] = 2;
+    pointMap["C"] = 3;
+
+    int totalScore = 0;
+
     if (inputFile.is_open())
     {
 
         while (inputFile)
         {
             std::getline(inputFile, line);
-            string commonItem;
-            if (elfCount % 3 == 0)
+
+            string opponentPlay = getOpponentString(line);
+            string myPlay;
+            if (line.find("X") != string::npos)
             {
-                elfGroup.push_back(line);
-                // do sum check here
-                findBadgeItem(elfGroup, commonItem);
-                sum += priorityValueUM[commonItem];
-                cout << "Badge found: " << commonItem << endl;
-                // clear elf group
-                elfGroup.clear();
+                myPlay = lossMap[opponentPlay];
+                totalScore += pointMap[myPlay];
             }
-            else
+            else if (line.find("Y") != string::npos)
             {
-                elfGroup.push_back(line);
+                totalScore += 3;
+                totalScore += pointMap[opponentPlay];
             }
-            elfCount++;
+            else if (line.find("Z") != string::npos)
+            {
+                myPlay = winMap[opponentPlay];
+                totalScore += 6;
+                totalScore += pointMap[myPlay];
+            }
         }
 
+        cout << "Total score is " << totalScore << endl;
         // close our file
         inputFile.close();
     }
-
-    cout << "Final sum is " << sum << endl;
 
 }
