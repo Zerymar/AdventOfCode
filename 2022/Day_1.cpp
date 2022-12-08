@@ -42,7 +42,7 @@ void printMap(unordered_map<string, int> umap)
 
 int main()
 {
-    string filePath = "C:/Users/cesar/OneDrive/Documents/GitHub/AdventOfCode/2022/Files/aoc_day1.txt";
+    string filePath = "aoc_day1.txt";
 
     ifstream inputFile(filePath);
     string line;
