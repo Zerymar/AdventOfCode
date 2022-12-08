@@ -43,7 +43,7 @@ string getOpponentString(string line)
 
 int main()
 {
-    string filePath = "C:/Users/cesar/OneDrive/Documents/GitHub/AdventOfCode/2022/Files/aoc_day2.txt";
+    string filePath = "aoc_day2.txt";
     ifstream inputFile(filePath);
     string line;
 
